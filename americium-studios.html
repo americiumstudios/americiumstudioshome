@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07090d" />
+  <title>Americium Studios — Interactive Worlds, Engineered</title>
+  <meta name="description" content="Americium Studios builds intense, immersive interactive experiences with precision, atmosphere, and technical depth." />
+
+  <style>
+    :root{
+      --bg:#07090d;
+      --bg2:#0b0f15;
+      --panel:#0f141c;
+      --panel2:#111824;
+      --text:#f2f4f7;
+      --muted:#9aa3af;
+      --line:rgba(255,255,255,.10);
+      --line-strong:rgba(255,255,255,.18);
+      --accent:#d7ff34;
+      --accent-soft:rgba(215,255,52,.14);
+      --danger:#ff4f4f;
+      --shadow:0 20px 70px rgba(0,0,0,.45);
+      --radius:22px;
+      --max:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(215,255,52,.06), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,.035), transparent 25%),
+        linear-gradient(180deg,#07090d 0%,#090c11 45%,#06080b 100%);
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:linear-gradient(to bottom,black,transparent 78%);
+      z-index:-1;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
+    img{max-width:100%}
+
+    .wrap{
+      width:min(calc(100% - 40px),var(--max));
+      margin-inline:auto;
+    }
+
+    .nav-shell{
+      position:fixed;
+      inset:18px 0 auto 0;
+      z-index:50;
+      padding-inline:20px;
+    }
+
+    nav{
+      width:min(100%,var(--max));
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+      padding:12px 14px 12px 16px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      background:rgba(8,11,15,.74);
+      backdrop-filter:blur(18px);
+      box-shadow:0 8px 30px rgba(0,0,0,.25);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:max-content;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .mark{
+      width:38px;
+      height:38px;
+      border:1px solid var(--line-strong);
+      border-radius:11px;
+      display:grid;
+      place-items:center;
+      background:
+        linear-gradient(135deg,rgba(215,255,52,.16),transparent 60%),
+        #0b1016;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .mark::after{
+      content:"95";
+      color:var(--accent);
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:-.06em;
+    }
+
+    .brand small{
+      display:block;
+      color:#7c8796;
+      font-size:9px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-top:1px;
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#b9c0ca;
+      font-size:14px;
+    }
+
+    .nav-links a{
+      padding:10px 12px;
+      border-radius:11px;
+      transition:.2s ease;
+    }
+
+    .nav-links a:hover{
+      color:#fff;
+      background:rgba(255,255,255,.05);
+    }
+
+    .nav-cta{
+      border:1px solid rgba(215,255,52,.28);
+      color:#ecffc0 !important;
+      background:rgba(215,255,52,.07) !important;
+    }
+
+    .hero{
+      min-height:100vh;
+      display:grid;
+      align-items:center;
+      padding:150px 0 90px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      align-items:center;
+      gap:70px;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      color:#b9c58c;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:11px;
+      font-weight:800;
+      border:1px solid rgba(215,255,52,.16);
+      background:rgba(215,255,52,.045);
+      padding:8px 11px;
+      border-radius:999px;
+    }
+
+    .eyebrow::before{
+      content:"";
+      width:7px;height:7px;border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 16px var(--accent);
+    }
+
+    h1{
+      font-size:clamp(54px,7vw,102px);
+      line-height:.91;
+      letter-spacing:-.055em;
+      margin:22px 0 26px;
+      max-width:900px;
+    }
+
+    .ghost{
+      color:transparent;
+      -webkit-text-stroke:1px rgba(255,255,255,.28);
+      text-stroke:1px rgba(255,255,255,.28);
+    }
+
+    .hero p{
+      color:#aab2bf;
+      line-height:1.75;
+      font-size:17px;
+      max-width:650px;
+      margin:0;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:34px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:13px 16px;
+      border-radius:13px;
+      border:1px solid var(--line);
+      background:#111720;
+      color:#fff;
+      font-weight:700;
+      font-size:14px;
+      transition:.2s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      border-color:var(--line-strong);
+      background:#151d28;
+    }
+
+    .btn.primary{
+      background:var(--accent);
+      color:#111;
+      border-color:var(--accent);
+      box-shadow:0 10px 35px rgba(215,255,52,.12);
+    }
+
+    .btn.primary:hover{
+      filter:brightness(1.03);
+      box-shadow:0 14px 42px rgba(215,255,52,.18);
+    }
+
+    .mini-arrow{font-size:18px;line-height:1}
+
+    .hero-visual{
+      position:relative;
+      min-height:580px;
+      display:grid;
+      place-items:center;
+    }
+
+    .reactor{
+      width:min(430px,85vw);
+      aspect-ratio:1;
+      position:relative;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at center,rgba(215,255,52,.07) 0 17%,transparent 17.5%),
+        radial-gradient(circle at center,transparent 0 38%,rgba(255,255,255,.06) 38.4% 38.8%,transparent 39.2%),
+        radial-gradient(circle at center,transparent 0 49%,rgba(215,255,52,.12) 49.2% 49.6%,transparent 50%);
+      animation:float 7s ease-in-out infinite;
+    }
+
+    .reactor::before,
+    .reactor::after{
+      content:"";
+      position:absolute;
+      inset:7%;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .reactor::after{
+      inset:19%;
+      border-style:dashed;
+      border-color:rgba(215,255,52,.18);
+      animation:spin 22s linear infinite;
+    }
+
+    .core{
+      width:170px;height:170px;
+      border-radius:40px;
+      transform:rotate(45deg);
+      border:1px solid rgba(215,255,52,.32);
+      background:
+        linear-gradient(135deg,rgba(215,255,52,.17),transparent 45%),
+        linear-gradient(315deg,rgba(255,255,255,.03),transparent 45%),
+        #0c1219;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.025),
+        0 0 80px rgba(215,255,52,.06),
+        0 40px 100px rgba(0,0,0,.45);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .core::before{
+      content:"AM";
+      transform:rotate(-45deg);
+      color:#f4f7ef;
+      font-size:60px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.08em;
+    }
+
+    .core::after{
+      content:"95";
+      position:absolute;
+      transform:rotate(-45deg);
+      color:var(--accent);
+      font-size:20px;
+      font-weight:900;
+      right:23px;
+      bottom:24px;
+    }
+
+    .hud-card{
+      position:absolute;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(9,13,18,.78);
+      backdrop-filter:blur(12px);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:13px 14px;
+      min-width:155px;
+      color:#c4cbd4;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .hud-card strong{color:#fff}
+    .hud-a{top:12%;left:0}
+    .hud-b{bottom:10%;right:0}
+    .bar{
+      height:4px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      margin-top:9px;
+      overflow:hidden;
+    }
+    .bar span{display:block;height:100%;background:var(--accent)}
+
+    .scanline{
+      position:absolute;
+      left:8%;right:8%;height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      box-shadow:0 0 18px rgba(215,255,52,.45);
+      opacity:.55;
+      animation:scan 5.4s linear infinite;
+    }
+
+    section{padding:105px 0}
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:30px;
+      margin-bottom:34px;
+    }
+
+    .kicker{
+      color:var(--accent);
+      text-transform:uppercase;
+      letter-spacing:.18em;
+      font-size:11px;
+      font-weight:800;
+    }
+
+    h2{
+      font-size:clamp(36px,5vw,62px);
+      line-height:1;
+      letter-spacing:-.04em;
+      margin:11px 0 0;
+    }
+
+    .section-head p{
+      color:var(--muted);
+      max-width:520px;
+      line-height:1.7;
+      margin:0;
+    }
+
+    .projects{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:18px;
+    }
+
+    .project{
+      min-height:360px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#0d1218;
+      position:relative;
+      overflow:hidden;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      box-shadow:0 18px 60px rgba(0,0,0,.22);
+    }
+
+    .project.large{min-height:560px;grid-row:span 2}
+    .project::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(180deg,transparent 0 28%,rgba(3,5,8,.20) 52%,rgba(3,5,8,.92) 100%),
+        radial-gradient(circle at 65% 30%,rgba(215,255,52,.10),transparent 28%),
+        linear-gradient(135deg,#111925,#080c11);
+    }
+
+    .project::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(120deg,transparent 32%,rgba(255,255,255,.025) 33%,transparent 34%),
+        repeating-linear-gradient(0deg,transparent 0 25px,rgba(255,255,255,.018) 26px);
+      mix-blend-mode:screen;
+      opacity:.7;
+    }
+
+    .project .scene{
+      position:absolute;
+      inset:0;
+      z-index:1;
+    }
+
+    .mountain{
+      position:absolute;
+      width:85%;
+      height:52%;
+      right:-12%;
+      bottom:20%;
+      clip-path:polygon(0 100%,25% 45%,41% 69%,55% 25%,73% 55%,100% 0,100% 100%);
+      background:linear-gradient(160deg,#1a2430,#0b1118 70%);
+      filter:drop-shadow(-10px 20px 30px rgba(0,0,0,.3));
+    }
+
+    .target-ring{
+      position:absolute;
+      width:160px;height:160px;
+      border:1px solid rgba(215,255,52,.26);
+      border-radius:50%;
+      top:22%;left:15%;
+      box-shadow:inset 0 0 0 25px rgba(215,255,52,.008);
+    }
+
+    .target-ring::before,.target-ring::after{
+      content:"";
+      position:absolute;inset:26%;
+      border:1px dashed rgba(215,255,52,.3);
+      border-radius:50%;
+    }
+    .target-ring::after{inset:43%;border-style:solid}
+
+    .project-content{position:relative;z-index:2}
+    .project-tag{
+      display:inline-flex;
+      width:max-content;
+      padding:7px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      color:#b7c0cb;
+      font-size:10px;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      background:rgba(7,10,14,.5);
+      backdrop-filter:blur(8px);
+    }
+
+    .project h3{
+      font-size:30px;
+      margin:13px 0 8px;
+      letter-spacing:-.035em;
+    }
+
+    .project p{
+      color:#a8b0bb;
+      margin:0;
+      line-height:1.6;
+      max-width:540px;
+    }
+
+    .project-meta{
+      display:flex;gap:14px;flex-wrap:wrap;
+      margin-top:18px;
+      color:#7f8996;
+      font-size:12px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .pillars{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .pillar{
+      padding:28px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012));
+      min-height:280px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .pillar::after{
+      content:"";
+      position:absolute;
+      width:120px;height:120px;
+      border-radius:50%;
+      background:var(--accent);
+      opacity:.035;
+      filter:blur(8px);
+      right:-20px;top:-20px;
+    }
+
+    .num{
+      color:#697382;
+      font-size:12px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      letter-spacing:.15em;
+    }
+
+    .pillar h3{
+      margin:42px 0 12px;
+      font-size:24px;
+      letter-spacing:-.03em;
+    }
+
+    .pillar p{
+      color:var(--muted);
+      line-height:1.7;
+      margin:0;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+    }
+
+    .stat{
+      padding:30px 20px;
+      text-align:center;
+      border-right:1px solid var(--line);
+    }
+    .stat:last-child{border-right:0}
+    .stat b{
+      display:block;
+      font-size:32px;
+      letter-spacing:-.04em;
+    }
+    .stat span{
+      display:block;
+      margin-top:7px;
+      color:#818b99;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
+
+    .contact{
+      border:1px solid rgba(215,255,52,.16);
+      border-radius:32px;
+      padding:54px;
+      background:
+        radial-gradient(circle at 0% 100%,rgba(215,255,52,.08),transparent 30%),
+        linear-gradient(145deg,#10161e,#0a0e13);
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:end;
+      gap:40px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .contact::after{
+      content:"95";
+      position:absolute;
+      right:3%;
+      top:-42px;
+      font-weight:900;
+      font-size:200px;
+      color:rgba(255,255,255,.018);
+      letter-spacing:-.08em;
+      pointer-events:none;
+    }
+
+    .contact h2{max-width:760px}
+    .contact p{
+      color:var(--muted);
+      line-height:1.7;
+      max-width:680px;
+    }
+
+    footer{
+      padding:30px 0 45px;
+      color:#6e7885;
+      font-size:12px;
+    }
+
+    .footer-row{
+      border-top:1px solid var(--line);
+      padding-top:25px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(20px);
+      transition:.65s ease;
+    }
+    .reveal.visible{
+      opacity:1;
+      transform:none;
+    }
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes float{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-12px)}
+    }
+    @keyframes scan{
+      0%{top:16%;opacity:0}
+      10%{opacity:.65}
+      90%{opacity:.65}
+      100%{top:82%;opacity:0}
+    }
+
+    @media (max-width:920px){
+      .hero-grid{grid-template-columns:1fr;gap:40px}
+      .hero-visual{min-height:430px}
+      .hud-a{left:3%}.hud-b{right:3%}
+      .projects{grid-template-columns:1fr}
+      .project.large{grid-row:auto;min-height:460px}
+      .pillars{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .stat:nth-child(2){border-right:0}
+      .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .contact{grid-template-columns:1fr;padding:38px}
+    }
+
+    @media (max-width:700px){
+      .nav-links a:not(.nav-cta){display:none}
+      .nav-shell{top:10px}
+      nav{border-radius:14px}
+      .hero{padding-top:120px}
+      h1{font-size:clamp(50px,15vw,76px)}
+      .section-head{align-items:start;flex-direction:column}
+      .reactor{width:340px}
+      .core{width:135px;height:135px;border-radius:32px}
+      .core::before{font-size:47px}
+      .hud-card{transform:scale(.88)}
+      .project{padding:22px}
+      .contact{padding:28px;border-radius:24px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+      .reveal{opacity:1;transform:none}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav-shell">
+    <nav>
+      <a href="#top" class="brand" aria-label="Americium Studios home">
+        <div class="mark"></div>
+        <div>
+          Americium Studios
+          <small>AM-95</small>
+        </div>
+      </a>
+
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#approach">Approach</a>
+        <a href="#about">Studio</a>
+        <a href="#contact" class="nav-cta">Contact</a>
+      </div>
+    </nav>
+  </div>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="reveal">
+          <span class="eyebrow">Independent Game Studio</span>
+          <h1>
+            BUILT FOR<br>
+            <span class="ghost">IMPACT.</span>
+          </h1>
+          <p>
+            Americium Studios creates high-intensity interactive experiences built around
+            precision, atmosphere, responsive systems, and worlds that feel alive under pressure.
+          </p>
+
+          <div class="actions">
+            <a class="btn primary" href="#work">
+              View our work <span class="mini-arrow">↗</span>
+            </a>
+            <a class="btn" href="#about">
+              About the studio
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="reactor">
+            <div class="scanline"></div>
+            <div class="core"></div>
+          </div>
+
+          <div class="hud-card hud-a">
+            <strong>AM-95 // CORE</strong>
+            <div style="margin-top:7px">SYSTEM STATUS: ACTIVE</div>
+            <div class="bar"><span style="width:82%"></span></div>
+          </div>
+
+          <div class="hud-card hud-b">
+            <strong>BUILD // 01</strong>
+            <div style="margin-top:7px">IMMERSION INDEX</div>
+            <div class="bar"><span style="width:94%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Selected Development</div>
+            <h2>Games with weight.</h2>
+          </div>
+          <p>
+            We focus on deliberate mechanics, believable environments, strong visual identity,
+            and systems that reward mastery.
+          </p>
+        </div>
+
+        <div class="projects">
+          <article class="project large reveal">
+            <div class="scene">
+              <div class="mountain"></div>
+              <div class="target-ring"></div>
+            </div>
+            <div class="project-content">
+              <span class="project-tag">In Development</span>
+              <h3>Project STRIKE</h3>
+              <p>
+                A fast, low-altitude combat experience centered on control, situational awareness,
+                and aggressive movement through hostile terrain.
+              </p>
+              <div class="project-meta">
+                <span>PC</span>
+                <span>3D</span>
+                <span>Real-time Simulation</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="scene">
+              <div class="target-ring" style="width:120px;height:120px;left:auto;right:13%;top:15%"></div>
+            </div>
+            <div class="project-content">
+              <span class="project-tag">Prototype</span>
+              <h3>Project VECTOR</h3>
+              <p>
+                Movement, timing, and clean feedback distilled into a focused gameplay testbed.
+              </p>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="scene">
+              <div class="mountain" style="right:-25%;bottom:5%;opacity:.8"></div>
+            </div>
+            <div class="project-content">
+              <span class="project-tag">R&D</span>
+              <h3>Project NIGHTGLASS</h3>
+              <p>
+                An atmosphere-first technical experiment in visibility, audio, and tension.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="approach">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Our Approach</div>
+            <h2>Precision over noise.</h2>
+          </div>
+          <p>
+            Every system should communicate clearly. Every environment should tell a story.
+            Every action should feel intentional.
+          </p>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar reveal">
+            <div class="num">01 / SYSTEMS</div>
+            <h3>Responsive by design</h3>
+            <p>
+              Tight controls, readable feedback, and mechanics built to feel immediate without
+              sacrificing depth.
+            </p>
+          </div>
+
+          <div class="pillar reveal">
+            <div class="num">02 / WORLD</div>
+            <h3>Atmosphere with purpose</h3>
+            <p>
+              Lighting, sound, scale, and environmental detail work together to make every space
+              feel grounded and dangerous.
+            </p>
+          </div>
+
+          <div class="pillar reveal">
+            <div class="num">03 / TECH</div>
+            <h3>Built to evolve</h3>
+            <p>
+              Modular systems and technical experimentation let us iterate fast and push ideas
+              further without losing focus.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div>
+            <div class="kicker">Americium Studios</div>
+            <h2>Independent by intent.</h2>
+          </div>
+          <p>
+            We are building a studio around ambitious interactive projects, technical curiosity,
+            and a commitment to creating experiences with a distinct identity.
+          </p>
+        </div>
+
+        <div class="stats reveal">
+          <div class="stat">
+            <b>95</b>
+            <span>Atomic identity</span>
+          </div>
+          <div class="stat">
+            <b>3D</b>
+            <span>Real-time worlds</span>
+          </div>
+          <div class="stat">
+            <b>PC</b>
+            <span>Primary platform</span>
+          </div>
+          <div class="stat">
+            <b>01</b>
+            <span>Independent studio</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="contact reveal">
+          <div>
+            <div class="kicker">Contact</div>
+            <h2>Something worth building?</h2>
+            <p>
+              Americium Studios is focused on developing original interactive projects and
+              exploring new technical ideas in game development.
+            </p>
+          </div>
+
+          <a class="btn primary" href="mailto:contact@americiumstudios.com">
+            contact@americiumstudios.com <span class="mini-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <div>© <span id="year"></span> Americium Studios. All rights reserved.</div>
+      <div>AM-95 // INTERACTIVE DEVELOPMENT</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+
+    const nav = document.querySelector("nav");
+    window.addEventListener("scroll", () => {
+      const scrolled = window.scrollY > 24;
+      nav.style.background = scrolled ? "rgba(8,11,15,.88)" : "rgba(8,11,15,.74)";
+      nav.style.borderColor = scrolled ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.08)";
+    }, { passive: true });
+  </script>
+</body>
+</html>
